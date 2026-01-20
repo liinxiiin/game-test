@@ -1,180 +1,92 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GitHub Models Chat</title>
-
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: linear-gradient(135deg, #8BC6EC, #9599E2);
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #333;
-    }
-
-    .container {
-      width: 90%;
-      max-width: 600px;
-      background: rgba(255, 255, 255, 0.25);
-      border-radius: 20px;
-      padding: 30px;
-      backdrop-filter: blur(15px);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-      animation: fadeIn 0.8s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-
-    h2 {
-      text-align: center;
-      margin: 0 0 20px;
-      color: #fff;
-      font-size: 24px;
-      font-weight: 600;
-    }
-
-    .input-label {
-      font-size: 14px;
-      margin-top: 12px;
-      color: #fff;
-      display: block;
-      font-weight: 500;
-    }
-
-    .input-box, textarea {
-      width: 100%;
-      padding: 12px 14px;
-      margin-top: 8px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.4);
-      background: rgba(255,255,255,0.35);
-      color: #333;
-      font-size: 15px;
-      outline: none;
-      transition: 0.3s;
-    }
-    .input-box:focus, textarea:focus {
-      background: rgba(255,255,255,0.55);
-      border-color: #fff;
-      box-shadow: 0 0 8px rgba(255,255,255,0.8);
-    }
-
-    textarea {
-      resize: vertical;
-    }
-
-    #sendBtn {
-      width: 100%;
-      padding: 12px;
-      margin-top: 20px;
-      border: none;
-      border-radius: 12px;
-      background: #fff;
-      color: #4a4a4a;
-      font-size: 17px;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      transition: 0.25s;
-    }
-
-    #sendBtn:hover {
-      background: #f1f1f1;
-      transform: translateY(-2px);
-    }
-
-    #output {
-      margin-top: 25px;
-      padding: 15px;
-      background: rgba(255,255,255,0.4);
-      border-radius: 12px;
-      min-height: 100px;
-      color: #222;
-      line-height: 1.6;
-      white-space: pre-wrap;
-      box-shadow: inset 0 4px 10px rgba(0,0,0,0.1);
-    }
-  </style>
-</head>
-
-<body>
-
-<div class="container">
-  <h2>✨ GitHub Models Chat</h2>
-
-  <label class="input-label">你的 GitHub Models Token（ghm_xxx）</label>
-  <input id="tokenInput" class="input-box" placeholder="请输入 Token">
-
-  <label class="input-label">你的提问内容</label>
-  <textarea id="questionInput" class="input-box" rows="4" placeholder="例如：法国首都是哪里？"></textarea>
-
-  <button id="sendBtn">🚀 发送请求</button>
-
-  <div id="output"></div>
-</div>
-
-<script>
-const endpoint = "https://models.github.ai/inference";
-const model = "xai/grok-3-mini";
-
-document.getElementById("sendBtn").onclick = async () => {
-    const token = document.getElementById("tokenInput").value.trim();
-    const question = document.getElementById("questionInput").value.trim();
-    const output = document.getElementById("output");
-
-    if (!token) {
-        output.textContent = "❌ 请先输入你的 GitHub Token！";
-        return;
-    }
-    if (!question) {
-        output.textContent = "❌ 请输入你要问的问题！";
-        return;
-    }
-
-    output.textContent = "⏳ 正在请求模型，请稍等…";
-
-    const body = {
-        messages: [
-            { role: "system", content: "You are a helpful assistant." },
-            { role: "user", content: question }
-        ],
-        model: model,
-        temperature: 1.0,
-        top_p: 1.0
-    };
-
-    try {
-        const res = await fetch(endpoint + "/chat/completions", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + token
-            },
-            body: JSON.stringify(body)
-        });
-
-        const data = await res.json();
-
-        if (data.error) {
-            output.textContent = "❌ 错误：\n" + JSON.stringify(data.error, null, 2);
-        } else {
-            output.textContent = "💬 模型回复：\n\n" + data.choices[0].message.content;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>太空弹珠：圆心竞技场 - 模块化版</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { 
+            background-color: #020617; 
+            overflow: hidden; 
+            touch-action: none; 
+            user-select: none; 
+            font-family: 'Courier New', Courier, monospace; 
         }
+        canvas { 
+            filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.2)); 
+            display: block;
+        }
+        .type-icon { transition: all 0.3s; cursor: pointer; border: 2px solid transparent; opacity: 0.5; }
+        .type-icon.active { border-color: #3b82f6; background: rgba(59, 130, 246, 0.2); opacity: 1; transform: scale(1.1); box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
+        .multiplier-btn:active:not(:disabled) { transform: scale(0.95); }
+        .multiplier-btn:disabled { opacity: 0.5; cursor: not-allowed; border-color: #ef4444; }
+        .glow-blue { box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
+        #stats-panel { transition: transform 0.4s, opacity 0.3s; transform-origin: bottom right; }
+        #stats-panel.hidden-panel { transform: scale(0); opacity: 0; pointer-events: none; }
+        #game-container { position: relative; }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen bg-slate-950 text-white">
 
-    } catch (err) {
-        output.textContent = "❌ 请求失败： " + err;
-    }
-};
-</script>
+    <!-- HUD (抬头显示) -->
+    <div class="absolute top-4 w-full max-w-lg flex justify-between items-center z-10 pointer-events-none px-6">
+        <div class="flex flex-col">
+            <span class="text-slate-500 text-[10px] uppercase tracking-tighter">得分 (SCORE)</span>
+            <span id="current-score-display" class="text-2xl font-bold text-blue-400">0</span>
+        </div>
+        
+        <div class="flex gap-2 pointer-events-auto bg-slate-900/50 p-1.5 rounded-full border border-slate-700 backdrop-blur-sm">
+            <div data-type="earth" class="type-icon active w-10 h-10 flex items-center justify-center rounded-full text-lg" title="地球模式">🌍</div>
+            <div data-type="moon" class="type-icon w-10 h-10 flex items-center justify-center rounded-full text-lg" title="月球模式">🌑</div>
+            <div data-type="comet" class="type-icon w-10 h-10 flex items-center justify-center rounded-full text-lg" title="彗星模式">☄️</div>
+        </div>
 
+        <div class="flex flex-col text-right">
+            <span class="text-slate-500 text-[10px] uppercase tracking-tighter">弹药 (AMMO)</span>
+            <span id="ammo-display" class="text-2xl font-bold text-yellow-400">100</span>
+        </div>
+    </div>
+
+    <!-- 游戏主容器 -->
+    <div id="game-container" class="relative w-full max-w-lg aspect-square rounded-full overflow-hidden border-4 border-slate-800 bg-slate-900 shadow-[inset_0_0_50px_rgba(0,0,0,0.5)]">
+        <canvas id="gameCanvas"></canvas>
+        
+        <!-- 菜单遮罩 -->
+        <div id="menu-overlay" class="absolute inset-0 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center z-30 transition-opacity duration-300">
+            <h1 class="text-4xl font-black mb-2 tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-500 text-center px-4">MODULE CORE</h1>
+            <p class="text-blue-500 text-[10px] mb-8 tracking-[0.4em]">SYSTEM READY</p>
+            <button id="start-btn" class="px-12 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-sm transition-all active:scale-95">启动系统</button>
+            <p id="game-over-text" class="hidden mt-4 text-red-500 font-bold animate-pulse uppercase">AMMO DEPLETED</p>
+        </div>
+    </div>
+
+    <!-- 底部控制 -->
+    <div class="mt-6 flex flex-col items-center gap-2">
+        <button id="upgrade-multiplier-btn" class="multiplier-btn glow-blue px-8 py-3 rounded-xl border border-blue-500/30 flex flex-col items-center group bg-slate-900">
+            <span class="text-[10px] text-slate-400 uppercase tracking-[0.2em] group-hover:text-blue-400">当前倍率</span>
+            <span id="multiplier-text" class="text-2xl font-black text-blue-400">1X</span>
+        </button>
+        <p id="multiplier-hint" class="text-[9px] text-slate-500 uppercase tracking-widest">点击翻倍消耗与奖励</p>
+    </div>
+
+    <!-- 统计面板组件 -->
+    <div id="stats-container" class="fixed bottom-6 right-6 flex flex-col items-end z-40">
+        <div id="stats-panel" class="hidden-panel w-64 bg-slate-900/90 border border-slate-700 rounded-lg p-4 mb-3 backdrop-blur-md shadow-2xl">
+            <div class="flex justify-between items-center mb-2 border-b border-slate-700 pb-2">
+                <span class="text-[10px] text-blue-400 font-bold tracking-widest uppercase">效率监控</span>
+                <button id="close-stats-btn" class="text-slate-500 hover:text-white">✕</button>
+            </div>
+            <canvas id="chartCanvas" width="220" height="120" class="w-full"></canvas>
+            <div class="mt-2 flex justify-between text-[8px] text-slate-500 uppercase">
+                <span>实时收益</span>
+                <span id="current-efficiency-text">EFF: 0.00</span>
+            </div>
+        </div>
+        <button id="stats-toggle-btn" class="w-12 h-12 rounded-full bg-slate-800 border border-slate-600 flex items-center justify-center hover:bg-slate-700 transition-colors shadow-lg text-blue-400">📊</button>
+    </div>
+
+    <!-- 模块化加载入口 -->
+    <script type="module" src="./js/main.js"></script>
 </body>
 </html>
