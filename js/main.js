@@ -2,7 +2,7 @@ import { state } from './state.js';
 import { INPUT, setupInputs } from './input.js';
 import { initLevel, spawnBall } from './entities.js';
 import { updatePhysics } from './physics.js';
-import { render } from './js/renderer.js';
+import { render } from './renderer.js';
 import { updateHUD } from './ui.js';
 import { formatNumber } from './utils.js';
 

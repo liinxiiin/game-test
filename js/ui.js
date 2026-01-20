@@ -16,7 +16,7 @@ export function updateHUD() {
         document.getElementById('multiplier-hint').classList.add('text-red-500');
     } else {
         btn.disabled = false;
-        document.getElementById('multiplier-hint').innerText = "点击翻倍消耗";
+        document.getElementById('multiplier-hint').innerText = "点击翻倍";
         document.getElementById('multiplier-hint').classList.remove('text-red-500');
     }
 }
@@ -31,9 +31,12 @@ export function updateAllMultipliers() {
 }
 
 export function getSlotVisuals(m) {
-    if (m >= 16) return { color: '#f43f5e', label: `${m}X` };
-    if (m >= 4) return { color: '#a855f7', label: `${m}X` };
-    return { color: '#eab308', label: m > 1 ? `${m}X` : '1X' };
+    if (m >= 1024) return { color: '#ff4f00', label: `${m}X`, text: `LEGENDARY ${m}!!!` };
+    if (m >= 256) return { color: '#ffff15', label: `${m}X`, text: `AMAZING ${m}!!` };
+    if (m >= 64) return { color: '#9e0e8d', label: `${m}X`, text: `EXECELLENT ${m}!` };
+    if (m >= 16) return { color: '#3fa9f4', label: `${m}X`, text: `NICE ${m}` };
+    if (m >= 4) return { color: '#54f061', label: `${m}X`, text: `GOOD ${m}` };
+    return { color: '#07efe7', label: m > 1 ? `${m}X` : '1X', text: `${m}` };
 }
 
 export function selectType(type) {

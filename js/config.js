@@ -32,7 +32,7 @@ export const PHYSICS_PRESETS = {
         ballBounciness: 0.7,
         ballRadius: 4,
         cooldown: 8,
-        rotationSpeed: 0.0045,
+        rotationSpeed: 0.0025,
         autoFireLimit: 60
     }
 };

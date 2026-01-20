@@ -6,7 +6,7 @@ export function spawnBall() {
     
     state.balls.push({
         x: state.centerX,
-        y: state.centerY - state.arenaRadius + 35,
+        y: state.centerY - state.arenaRadius + 20,
         vx: Math.sin(state.launcherAngle) * state.currentPhysics.initialSpeed,
         vy: Math.cos(state.launcherAngle) * state.currentPhysics.initialSpeed,
         r: state.currentPhysics.ballRadius,
@@ -19,57 +19,115 @@ export function initLevel() {
     state.slots = [];
     state.barriers = [];
 
-    // 1. 障碍物层级
+    // 1. Initialize Slots and Barriers first to define exclusion zones
+    const slotCount = 3;
+    const slotDist = 70;
+    for (let i = 0; i < slotCount; i++) {
+        const baseAngle = (i / slotCount) * Math.PI * 2 - Math.PI / 2;
+        
+        // Add Slot
+        const slot = {
+            baseAngle,
+            dist: slotDist,
+            r: 15,
+            multiplier: 1,
+            x: state.centerX + Math.cos(baseAngle) * slotDist, 
+            y: state.centerY + Math.sin(baseAngle) * slotDist
+        };
+        state.slots.push(slot);
+
+        // Add Barriers associated with this slot
+        for (let j = 0; j < 6; j++) {
+            const offsetAngle = (j / 6) * Math.PI * 2;
+            state.barriers.push({
+                slotIndex: i,
+                offsetAngle: offsetAngle,
+                orbitDist: 35,
+                width: 24,
+                height: 5,
+                x: 0, y: 0, // Calculated during physics update
+                angle: 0
+            });
+        }
+
+        // Add Barriers associated with this slot
+        for (let j = 0; j < 8; j++) {
+            const offsetAngle = (j / 8) * Math.PI * 2;
+            state.barriers.push({
+                slotIndex: i,
+                offsetAngle: offsetAngle,
+                orbitDist: 55,
+                width: 12,
+                height: 3,
+                x: 0, y: 0, // Calculated during physics update
+                angle: 0
+            });
+        }
+    }
+
+    // 2. Obstacle layers definition
     const layers = [
-        { radius: state.arenaRadius * 0.15, count: 6, obsR: 8, speed: 0.006 },
-        { radius: state.arenaRadius * 0.28, count: 8, obsR: 7, speed: 0.005 },
-        { radius: state.arenaRadius * 0.40, count: 12, obsR: 6, speed: -0.004 },
-        { radius: state.arenaRadius * 0.52, count: 16, obsR: 5, speed: 0.0035 },
-        { radius: state.arenaRadius * 0.65, count: 20, obsR: 5, speed: -0.0025 },
-        { radius: state.arenaRadius * 0.78, count: 24, obsR: 4, speed: 0.002 },
-        { radius: state.arenaRadius * 0.90, count: 36, obsR: 3.5, speed: -0.0015 }
+        { radius: state.arenaRadius * 0.00, count: 1, obsR: 10, speed: 0.000 },
+        // { radius: state.arenaRadius * 0.10, count: 6, obsR: 5, speed: 0.006 },
+        { radius: state.arenaRadius * 0.25, count: 15, obsR: 7, speed: 0.005 },
+        { radius: state.arenaRadius * 0.40, count: 20, obsR: 6, speed: -0.004 },
+        { radius: state.arenaRadius * 0.55, count: 20, obsR: 7, speed: 0.0035 },
+        { radius: state.arenaRadius * 0.65, count: 30, obsR: 8, speed: -0.0025 },
+        { radius: state.arenaRadius * 0.75, count: 40, obsR: 5, speed: 0.002 },
+        { radius: state.arenaRadius * 0.95, count: 30, obsR: 4, speed: -0.0015 }
     ];
 
     layers.forEach((layer, idx) => {
         for (let i = 0; i < layer.count; i++) {
             const startAngle = (i / layer.count) * Math.PI * 2;
-            state.obstacles.push({
-                baseAngle: startAngle,
-                dist: layer.radius,
-                r: layer.obsR,
-                orbitSpeed: layer.speed,
-                color: idx % 2 === 0 ? COLORS.obstacle1 : COLORS.obstacle2,
-                flash: 0,
-                x: 0, y: 0
-            });
+            
+            // Calculate initial positions to check for overlap
+            const obsX = state.centerX + Math.cos(startAngle) * layer.radius;
+            const obsY = state.centerY + Math.sin(startAngle) * layer.radius;
+
+            // Collision Check: Avoid overlap with Slots
+            let overlaps = false;
+            for (const slot of state.slots) {
+                const dx = obsX - slot.x;
+                const dy = obsY - slot.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                // Buffer of 5px to ensure visual spacing
+                if (dist < (layer.obsR + slot.r + 5)) {
+                    overlaps = true;
+                    break;
+                }
+            }
+
+            // Collision Check: Avoid overlap with Barriers (estimated orbit zone)
+            if (!overlaps) {
+                for (const slot of state.slots) {
+                    const dx = obsX - slot.x;
+                    const dy = obsY - slot.y;
+                    const distFromSlotCenter = Math.sqrt(dx * dx + dy * dy);
+                    // Barrier orbit is 35px from slot center, width/2 is 12px
+                    const barrierInner = 35 - 15;
+                    const barrierOuter = 35 + 15;
+                    if (distFromSlotCenter > barrierInner && distFromSlotCenter < barrierOuter) {
+                        overlaps = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!overlaps) {
+                state.obstacles.push({
+                    baseAngle: startAngle,
+                    dist: layer.radius,
+                    r: layer.obsR,
+                    orbitSpeed: layer.speed,
+                    color: idx % 2 === 0 ? COLORS.obstacle1 : COLORS.obstacle2,
+                    flash: 0,
+                    x: obsX, 
+                    y: obsY
+                });
+            }
         }
     });
-
-    // 2. 得分区与挡板
-    const slotCount = 3;
-    const slotDist = 70;
-    for (let i = 0; i < slotCount; i++) {
-        const baseAngle = (i / slotCount) * Math.PI * 2 - Math.PI / 2;
-        state.slots.push({
-            baseAngle,
-            dist: slotDist,
-            r: 25,
-            multiplier: 1,
-            x: 0, y: 0
-        });
-
-        for (let j = 0; j < 6; j++) {
-            state.barriers.push({
-                slotIndex: i,
-                offsetAngle: (j / 6) * Math.PI * 2,
-                orbitDist: 44,
-                width: 24,
-                height: 5,
-                x: 0, y: 0,
-                angle: 0
-            });
-        }
-    }
 
     state.voidZone = {
         start: Math.PI * 0.5 - 0.5,

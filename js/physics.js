@@ -109,7 +109,7 @@ export function updatePhysics() {
                 const reward = s.multiplier * state.multiplier;
                 state.score += reward;
                 state.inventory += reward;
-                createPopup(s.x, s.y, `+${reward} AMMO`, getSlotVisuals(s.multiplier).color);
+                createPopup(s.x, s.y, `+${getSlotVisuals(s.multiplier).text}`, getSlotVisuals(s.multiplier).color);
                 state.balls.splice(i, 1);
                 i--;
                 updateAllMultipliers();
