@@ -23,7 +23,7 @@ export function initLevel() {
     const slotCount = 3;
     const slotDist = 70;
     for (let i = 0; i < slotCount; i++) {
-        const baseAngle = (i / slotCount) * Math.PI * 2 - Math.PI / 2;
+        const baseAngle = (i / slotCount) * Math.PI * 2 - Math.PI / 6;
         
         // Add Slot
         const slot = {
@@ -43,6 +43,7 @@ export function initLevel() {
                 slotIndex: i,
                 offsetAngle: offsetAngle,
                 orbitDist: 35,
+                orbitSpeed: 1,
                 width: 24,
                 height: 5,
                 x: 0, y: 0, // Calculated during physics update
@@ -57,6 +58,7 @@ export function initLevel() {
                 slotIndex: i,
                 offsetAngle: offsetAngle,
                 orbitDist: 55,
+                orbitSpeed: -2,
                 width: 12,
                 height: 3,
                 x: 0, y: 0, // Calculated during physics update
@@ -67,14 +69,14 @@ export function initLevel() {
 
     // 2. Obstacle layers definition
     const layers = [
-        { radius: state.arenaRadius * 0.00, count: 1, obsR: 10, speed: 0.000 },
-        // { radius: state.arenaRadius * 0.10, count: 6, obsR: 5, speed: 0.006 },
-        { radius: state.arenaRadius * 0.25, count: 15, obsR: 7, speed: 0.005 },
-        { radius: state.arenaRadius * 0.40, count: 20, obsR: 6, speed: -0.004 },
-        { radius: state.arenaRadius * 0.55, count: 20, obsR: 7, speed: 0.0035 },
-        { radius: state.arenaRadius * 0.65, count: 30, obsR: 8, speed: -0.0025 },
-        { radius: state.arenaRadius * 0.75, count: 40, obsR: 5, speed: 0.002 },
-        { radius: state.arenaRadius * 0.95, count: 30, obsR: 4, speed: -0.0015 }
+        { radius: state.arenaRadius * 0.00, count: 1, obsR: 10, speed: 0.0 },
+        // { radius: state.arenaRadius * 0.10, count: 6, obsR: 5, speed: 0.6 },
+        { radius: state.arenaRadius * 0.3, count: 12, obsR: 15, speed: 0.5 },
+        { radius: state.arenaRadius * 0.40, count: 20, obsR: 6, speed: -1 },
+        { radius: state.arenaRadius * 0.55, count: 20, obsR: 7, speed: 0.35 },
+        { radius: state.arenaRadius * 0.65, count: 30, obsR: 8, speed: -0.25 },
+        { radius: state.arenaRadius * 0.75, count: 40, obsR: 5, speed: 0.2 },
+        { radius: state.arenaRadius * 0.95, count: 30, obsR: 4, speed: -0.15 }
     ];
 
     layers.forEach((layer, idx) => {

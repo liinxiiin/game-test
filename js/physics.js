@@ -71,18 +71,18 @@ export function updatePhysics() {
 
     // 更新位置
     state.obstacles.forEach(o => {
-        const a = o.baseAngle + state.worldRotation + (o.orbitSpeed * 10);
+        const a = o.baseAngle + state.worldRotation * o.orbitSpeed;
         o.x = state.centerX + Math.cos(a) * o.dist;
         o.y = state.centerY + Math.sin(a) * o.dist;
     });
-    state.slots.forEach(s => {
-        const a = s.baseAngle + state.worldRotation;
-        s.x = state.centerX + Math.cos(a) * s.dist;
-        s.y = state.centerY + Math.sin(a) * s.dist;
-    });
+    // state.slots.forEach(s => {
+    //     const a = s.baseAngle + state.worldRotation;
+    //     s.x = state.centerX + Math.cos(a) * s.dist;
+    //     s.y = state.centerY + Math.sin(a) * s.dist;
+    // });
     state.barriers.forEach(b => {
         const ps = state.slots[b.slotIndex];
-        const a = b.offsetAngle + state.worldRotation * 2;
+        const a = b.offsetAngle + state.worldRotation * b.orbitSpeed;
         b.x = ps.x + Math.cos(a) * b.orbitDist;
         b.y = ps.y + Math.sin(a) * b.orbitDist;
         b.angle = a + Math.PI / 2;
